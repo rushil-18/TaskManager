@@ -19,6 +19,8 @@ def verify_password(plain_password : str , hash_password : str):
 
 load_dotenv()
 SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("JWT_SECRET_KEY is not configured")
 ALGORITHM = "HS256"
 
 def create_access_token(user_id : int):
@@ -28,17 +30,45 @@ def create_access_token(user_id : int):
 
     return token
 
-def get_current_user(access_token : str = Cookie(None) , db : Session = Depends(get_db)):
+def get_current_user(
+    access_token: str | None = Cookie(default=None),
+    db: Session = Depends(get_db)
+):
     if not access_token:
-        raise HTTPException(status_code = 401 , detail = "Not Authenticated")
+        raise HTTPException(
+            status_code=401,
+            detail="Not authenticated"
+        )
+
     try:
-        payload = jwt.decode(access_token , SECRET_KEY , algorithms= [ALGORITHM])
+        payload = jwt.decode(
+            access_token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM]
+        )
+
         user_id = payload.get("sub")
+
+        if user_id is None:
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid authentication token"
+            )
+
         user_id = int(user_id)
-        user = db.query(User).filter(User.uid == user_id).first()
-    except JWTError:
-        raise HTTPException(status_code = 401 , detail = "Invalid token or expired")
-    
-    if not user :
-        raise HTTPException(status_code = 401 , detail = "User Not Found")
+
+    except (JWTError, ValueError):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired authentication token"
+        )
+
+    user = db.query(User).filter(User.uid == user_id).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="User not found"
+        )
+
     return user

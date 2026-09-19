@@ -45,7 +45,11 @@ def login(user_data: UserLogin,response : Response ,db: Session = Depends(get_db
     response.set_cookie(
         key = "access_token",
         value = access_token,
-        httponly = True
+        httponly = True,
+        secure = False,
+        samesite = "lax",
+        max_age = 30 * 60
+
     )
     return login_user
 

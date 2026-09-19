@@ -67,7 +67,7 @@ def get_task(
     return task
 
 
-@router.put("/tasks/{task_id}", response_model=TaskResponse)
+@router.patch("/tasks/{task_id}", response_model=TaskResponse)
 def update_task(
     task_id: int,
     task_data: TaskUpdate,

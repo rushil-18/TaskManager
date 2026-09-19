@@ -25,4 +25,5 @@ def home():
     
 
 #fastapi<-> database
-Base.metadata.create_all(bind = engine)
+#Base.metadata.create_all(bind = engine)
+#ALEMBIC APPLIED
