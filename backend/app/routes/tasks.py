@@ -148,6 +148,31 @@ def delete_task(
 
     return {"message": "Task deleted successfully"}
 
+@router.get("/progress")
+def get_progress(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    tasks = db.query(Task).filter(
+        Task.user_id == current_user.uid
+    ).all()
+
+    total_tasks = len(tasks)
+    completed_tasks = sum(task.completed for task in tasks)
+    pending_tasks = total_tasks - completed_tasks
+
+    completion_percentage = (
+        (completed_tasks / total_tasks) * 100
+        if total_tasks > 0
+        else 0
+    )
+
+    return {
+        "total_tasks": total_tasks,
+        "completed_tasks": completed_tasks,
+        "pending_tasks": pending_tasks,
+        "completion_percentage": round(completion_percentage, 2)
+    }
 
 
 

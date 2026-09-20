@@ -182,3 +182,35 @@
     border-right-color: var(--border);
   }
 }
+/* Task cards */
+
+.task-card {
+  background: white;
+  padding: 20px;
+  margin-top: 16px;
+
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+
+.task-card h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.task-card p {
+  margin: 6px 0;
+  color: #555;
+}
+
+.task-card button {
+  margin-top: 15px;
+  margin-right: 8px;
+
+  padding: 8px 14px;
+
+  border: 1px solid #ccc;
+  border-radius: 6px;
+
+  background: white;
+}
